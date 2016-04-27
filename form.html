@@ -35,7 +35,7 @@ input.shadowed { box-shadow: 1px 1px 2px 0px #000; }
 var checkForm = function(event) {
 
 	//console.log(arguments);
-	//if (typeof(arguments[0]) === 'undefined') {
+	//if (typeof(arguments[0]) === 'undefined') {}
 	if (typeof(event) === 'undefined') {
 		return false;
 	}
@@ -43,6 +43,7 @@ var checkForm = function(event) {
 	var $input = $(this);
 	var $result = $input.next('.result');
 	var id = $input.attr('id');
+	var name = $input.attr('name');
 	var type = $input.attr('type');
 	var value = $input.val();
 
@@ -86,7 +87,7 @@ var checkForm = function(event) {
 		default:
 			if ($input.hasClass('required') && value == '') {
 				$input.addClass('error');
-				$result.html('Le champ '+$input.attr('id')+' est obligatoire');
+				$result.html('Le champ '+name+' est obligatoire');
 			} else {
 				$input.addClass('success');
 			}
