@@ -1,0 +1,147 @@
+<!-- HTML -->
+<form>
+	<div>
+		<label for="name">Name :</label> <input type="text" id="name" name="name" class="required">
+		<span class="result"></span>
+	</div>
+
+	<div>
+		<label for="email">Email :</label> <input type="email" id="email" name="email">
+		<span class="result"></span>
+	</div>
+
+	<div>
+		<label for="password">Password :</label> <input type="password" id="password" name="password">
+		<span class="result"></span>
+	</div>
+
+	<input type="submit" value="OK">
+</form>
+
+<!-- CSS -->
+<style>
+form div { margin-bottom: 10px; }
+.result { color: red; }
+input.shadowed { box-shadow: 1px 1px 2px 0px #000; }
+.error { border: 1px solid red; color: red; }
+.success { border: 1px solid green; color: green; }
+</style>
+
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+
+/**
+* Fonction qui vérifie les champs d'un formulaire
+*
+*/
+var checkForm = function(event) {
+
+	//console.log(arguments);
+	//if (typeof(arguments[0]) === 'undefined') {}
+	// Si la fonction est appelee en dehors d'un evenement on('...')
+	if (typeof(event) === 'undefined') {
+		// On quitte la fonction
+		return false;
+	}
+
+	// On stock les selecteurs jQuery dans des variables
+	// Pour eviter de reparcourir le DOM a chaque fois
+	var $input = $(this); // Le champ actuel renvoye par on('...')
+	var $result = $input.next('.result'); // Le span qui affiche le message d'erreur
+	var id = $input.attr('id'); // L'id de l'input
+	var name = $input.attr('name'); // L'attribut name de l'input
+	var type = $input.attr('type'); // Le type de l'input (text, email,..etc)
+	var value = $input.val(); // La valeur de l'input (ce que le user a tapé dedant)
+
+	// Si on quitte le champ (clic en dehors, touche tabulation)
+	if (event.type == 'blur') {
+		// On enleve la class qui fait un box-shadow autour du champ
+		$input.removeClass('shadowed');
+	}
+
+	// Au depart on ignore si les champs sont en erreur ou pas
+	// On vire les 2 classes de couleur rouge/vert
+	$input.removeClass('error success');
+	// On vide le contenu du message d'erreur
+	$result.html('');
+
+
+	/*
+	if (type == 'email') {}
+	else if (type == 'password') {}
+	else {}
+	*/
+
+	// Suivant le type de champ on fait un traitement different
+	switch (type) {
+
+		case 'email':
+
+			if (value == '' || // Si l'email est vide
+				value.indexOf('@') == -1 || // OU qu'il ne contient pas d'arobase
+				value.indexOf('.') == -1 || // OU qu'il ne contient pas de point
+				value.length < 6) { // OU que sa longueur est inferieure a 6
+				//$input.css('border', '1px solid red');
+				$input.addClass('error'); // On ajoute la classe error pour colorer le champ en rouge
+				$result.html('Vous devez renseigner un email valide'); // On remplit la span.result avec le msg d'erreur
+			} else {
+				//$input.css('border', '1px solid green');
+				$input.addClass('success'); // On ajoute la classe success pour colorer le champ en vert
+			}
+		break;
+
+	 	case 'password':
+	 		// Si la longueur du mot de passe est inferieure a 8
+			if (value.length < 8) {
+				$input.addClass('error'); // On ajoute la classe error pour colorer le champ en rouge
+				$result.html('Le mot de passe doit faire 8 characteres minimum'); // On remplit la span.result avec le msg d'erreur
+			} else {
+				$input.addClass('success'); // On ajoute la classe success pour colorer le champ en vert
+			}
+		break;
+
+		case 'text':
+		default:
+			// Si le champ a une classe required ET que sa valeur est vide
+			if ($input.hasClass('required') && value == '') {
+				$input.addClass('error'); // On ajoute la classe error pour colorer le champ en rouge
+				$result.html('Le champ '+$input.attr('id')+' est obligatoire'); // On remplit la span.result avec le msg d'erreur et le nom du champ
+			} else {
+				$input.addClass('success'); // On ajoute la classe success pour colorer le champ en vert
+			}
+		break;
+	}
+}
+
+// Quand la page a finit de charger, le DOM est pret
+$(document).ready(function() {
+
+	// On stocke le selecteur des champs dans une variable
+	// Pour eviter de reparcourir le DOM a chaque appel au selecteur
+	var $fields = $('input[type="email"], input[type="password"], input[type="text"]');
+
+	// Quand on place le curseur dans le champ (clic ou tabulation)
+	$fields.on('focus', function() {
+		// On ajoute la classe shadowed pour mettre un box-shadow
+		$(this).addClass('shadowed');
+	});
+
+	// Si on quitte le champ (clic en dehors, tabulation)
+	// OU qu'on presse une touche de clavier dans le champ
+	// => Alors on execute la fonction checkForm qui reçoit l'evenement et le champ qui a provoque l'evenement
+	$fields.on('blur keypress', checkForm);
+
+	// Pour chacun des champs, s'ils ne sont pas vides au chargement de la page
+	// => Alors on declenche l'evenement blur pour appeler la fonction checkForm
+	$fields.each(function() {
+		if ($(this).val() != '') {
+			$(this).trigger('blur');
+		}
+	});
+
+	// On positionne le curseur dans le 1er champ en erreur
+	$('input.error').first().focus();
+});
+</script>
