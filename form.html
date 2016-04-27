@@ -1,0 +1,115 @@
+<!-- HTML -->
+<form>
+	<div>
+		<label for="name">Name :</label> <input type="text" id="name" name="name" class="required">
+		<span class="result"></span>
+	</div>
+
+	<div>
+		<label for="email">Email :</label> <input type="email" id="email" name="email">
+		<span class="result"></span>
+	</div>
+
+	<div>
+		<label for="password">Password :</label> <input type="password" id="password" name="password">
+		<span class="result"></span>
+	</div>
+
+	<input type="submit" value="OK">
+</form>
+
+<!-- CSS -->
+<style>
+form div { margin-bottom: 10px; }
+.result { color: red; }
+input.shadowed { box-shadow: 1px 1px 2px 0px #000; }
+.error { border: 1px solid red; color: red; }
+.success { border: 1px solid green; color: green; }
+</style>
+
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+
+var checkForm = function(event) {
+
+	//console.log(arguments);
+	//if (typeof(arguments[0]) === 'undefined') {
+	if (typeof(event) === 'undefined') {
+		return false;
+	}
+
+	var $input = $(this);
+	var $result = $input.next('.result');
+	var id = $input.attr('id');
+	var type = $input.attr('type');
+	var value = $input.val();
+
+	if (event.type == 'blur') {
+		$input.removeClass('shadowed');
+	}
+
+	/*
+	if (id == 'email') {}
+	else if (id == 'password') {}
+	else {}
+	*/
+
+	$input.removeClass('error success');
+	$result.html('');
+
+	switch (type) {
+
+		case 'email':
+			if (value == '' ||
+				value.indexOf('@') == -1 ||
+				value.indexOf('.') == -1 ||
+				value.length < 6) {
+				//$input.css('border', '1px solid red');
+				$input.addClass('error');
+				$result.html('Vous devez renseigner un email valide');
+			} else {
+				//$input.css('border', '1px solid green');
+				$input.addClass('success');
+			}
+		break;
+	 	case 'password':
+			if (value.length < 8) {
+				$input.addClass('error');
+				$result.html('Le mot de passe doit faire 8 characteres minimum')
+			} else {
+				$input.addClass('success');
+			}
+		break;
+		case 'text':
+		default:
+			if ($input.hasClass('required') && value == '') {
+				$input.addClass('error');
+				$result.html('Le champ '+$input.attr('id')+' est obligatoire');
+			} else {
+				$input.addClass('success');
+			}
+		break;
+	}
+}
+
+$(document).ready(function() {
+
+	var $fields = $('input[type="email"], input[type="password"], input[type="text"]');
+
+	$fields.on('focus', function() {
+		$(this).addClass('shadowed');
+	});
+
+	$fields.on('blur keypress', checkForm);
+
+	$fields.each(function() {
+		if ($(this).val() != '') {
+			$(this).trigger('blur');
+		}
+	});
+
+	$('input.error').first().focus();
+});
+</script>

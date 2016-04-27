@@ -1,0 +1,36 @@
+<!-- HTML -->
+<a id="mylink1" class="link" href="http://www.google.fr">Mon lien 1</a>
+<a id="mylink2" class="link" href="http://www.wf3.fr">Mon lien 2</a>
+
+<!-- CSS -->
+<style>
+a.clicked  { color: orange; }
+a:hover  { color: pink; }
+</style>
+
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+/*
+$('a.link').mouseover(function(e) {
+	$(this).addClass('over');
+});
+$('a.link').mouseout(function(e) {
+	$(this).removeClass('over');
+});
+*/
+
+var clickLink = function(e) {
+
+	console.log($(this).addClass('clicked'));
+
+	window.open($(this).attr('href'));
+
+	e.preventDefault();
+	e.stopPropagation();
+}
+
+//$('a#mylink1').click(clickLink); // On cible que le lien avec un id mylink1
+$('a.link').click(clickLink); // On cible tous les liens qui ont une classe .link
+</script>
